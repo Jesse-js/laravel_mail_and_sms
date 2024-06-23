@@ -7,9 +7,10 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\VonageMessage;
 use Illuminate\Notifications\Notification;
 
-class PostReplyNotification extends Notification
+class PostReplyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -17,8 +18,8 @@ class PostReplyNotification extends Notification
      * Create a new notification instance.
      */
     public function __construct(
-        protected User $user,
-        protected Post $post
+        public User $user,
+        public Post $post
     )
     {
         //
@@ -31,7 +32,7 @@ class PostReplyNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'vonage'];
     }
 
     /**
@@ -42,9 +43,17 @@ class PostReplyNotification extends Notification
         return (new MailMessage)
                     ->line('Post Reply Notification.')
                     ->greeting('Hi '.$this->user->name)
-                    ->line('A user has replied to your post.')
+                    ->line('A user has replied the '. $this->post->title . ' post.')
                     ->action('View Post', url('/posts/'.$this->post->id))
                     ->line('Thank you for using our application!');
+    }
+
+    
+    public function toVonage(object $notifiable): VonageMessage
+    {
+        return (new VonageMessage())
+                    ->content('A user has replied the '. $this->post->title . ' post.')
+                    ->unicode();
     }
 
     /**

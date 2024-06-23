@@ -16,6 +16,8 @@ class NotificationController extends Controller
         $user = Auth::user();
         $post =$user->posts()->first();
 
-        $user->notify(new PostReplyNotification(user: $user, post: $post));
+        $delay = now()->addMinutes(1);
+
+        $user->notify((new PostReplyNotification(user: $user, post: $post))->delay($delay));
     }
 }
