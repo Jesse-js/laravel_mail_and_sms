@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +16,10 @@ class PostReplyNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(
+        protected User $user,
+        protected Post $post
+    )
     {
         //
     }
@@ -35,8 +40,10 @@ class PostReplyNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line('Post Reply Notification.')
+                    ->greeting('Hi '.$this->user->name)
+                    ->line('A user has replied to your post.')
+                    ->action('View Post', url('/posts/'.$this->post->id))
                     ->line('Thank you for using our application!');
     }
 
