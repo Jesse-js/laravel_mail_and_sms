@@ -19,3 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('/notification', [NotificationController::class, 'sendNotification'])->name('notification');
+
