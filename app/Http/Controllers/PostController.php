@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -9,9 +10,9 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(Post $post)
     {
-        return view('post', ['id' => $id]);
+        return view('post', ['post' => $post]);
     }
 
     

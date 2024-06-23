@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/notification', [NotificationController::class, 'sendNotification'])->name('notification');
-
+Route::get('/notification', [NotificationController::class, 'sendNotification'])->name('notification.send');
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
