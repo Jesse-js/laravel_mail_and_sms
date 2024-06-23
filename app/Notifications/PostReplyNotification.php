@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\VonageMessage;
+use Illuminate\Notifications\Notification;
+
+class PostReplyNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct(
+        public User $user,
+        public Post $post
+    )
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'vonage'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+                    ->line('Post Reply Notification.')
+                    ->greeting('Hi '.$this->user->name)
+                    ->line('A user has replied the '. $this->post->title . ' post.')
+                    ->action('View Post', url('/posts/'.$this->post->id))
+                    ->line('Thank you for using our application!');
+    }
+
+    
+    public function toVonage(object $notifiable): VonageMessage
+    {
+        return (new VonageMessage())
+                    ->content('A user has replied the '. $this->post->title . ' post.')
+                    ->unicode();
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+}
